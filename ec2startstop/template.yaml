@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  starstopec2
+
+  Powertools for AWS Lambda (Python) example
+
+Globals: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html
+  Function:
+    Timeout: 60
+    MemorySize: 248
+    Runtime: python3.10
+
+# TODO 権限設定
+# TODO ポリシーなどのyamlの書き方で苦労しているので、説明できるくらいにこれを読め  https://pages.awscloud.com/rs/112-TZM-766/images/20190814_AWS-Blackbelt_SAM_rev.pdf
+Resources:
+  StartFunction:
+    Type: AWS::Serverless::Function     # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      Handler: ec2start.lambda_handler
+      CodeUri: src/
+      Description: ec2_function
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: ec2_function
+          LOG_LEVEL: INFO
+      Policies:
+      - PolicyName: StartEC2Policy
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action: [ec2:Start*]
+              Resource: "*"
+  StopFunction:
+    Type: AWS::Serverless::Function     # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      Handler: ec2stop.lambda_handler
+      CodeUri: src/
+      Description: ec2_function
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: ec2_function
+          LOG_LEVEL: INFO
+
+
+
